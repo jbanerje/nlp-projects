@@ -15,11 +15,11 @@ class analyzeSentiments:
         compound_score = score_dict['compound']
         
         if  compound_score>= 0.05:
-            polarity = 'Positive Sentiment'
+            polarity = 'Positive'
         elif (compound_score > -0.05) and (compound_score < 0.05):
-            polarity = 'Neutral Sentiment'
+            polarity = 'Neutral'
         else:
-            polarity = 'Negative Sentiment'
+            polarity = 'Negative'
             
         return polarity
     
@@ -31,6 +31,10 @@ class analyzeSentiments:
         polarity_df = pd.DataFrame([score_dict])[['pos', 'neg', 'neu']].T.reset_index().rename(columns={'index':'Sentiment', 0:'Score'}).sort_values(by='Score', ascending=False)
         
         polarity_df['Sentiment'] = polarity_df['Sentiment'].map(self.key_mapper)
-        # polarity_df = polarity_df.set_index('Sentiment')
+        polarity_df = polarity_df[polarity_df.Score > 0]
         
+        # polarity_df = polarity_df.set_index('Sentiment')
+
         return polarity_df
+                
+        
