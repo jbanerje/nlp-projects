@@ -12,6 +12,9 @@ stopwords_english = stopwords.words('english')
 from nltk.stem import WordNetLemmatizer
 lemmatizer = WordNetLemmatizer()
 
+import spacy
+nlp = spacy.load("en_core_web_sm")
+
 # EDA Pkgs
 import pandas as pd 
 import numpy as np 
@@ -126,7 +129,17 @@ def sentiment_pie_chart(sizes, labels):
     ax1.axis('equal')
     
     return fig1
-        
+
+def pos_tagging(text):
+    
+    doc = nlp(text)
+    pos_keywords = list(set([token.text for token in doc 
+                             if (token.pos_ == 'PROPN') or
+                                (token.pos_ == 'NUM') or
+                                (token.pos_ == 'NOUN')]))
+    return pos_keywords
+
+            
 def load_sentiment_analysis_ui():
     
     # Real Time Search Box
@@ -134,7 +147,8 @@ def load_sentiment_analysis_ui():
         st.header('Analyze Your Sentence')
         raw_text = st.text_area("")
         submit_text = st.form_submit_button(label='Submit')
-    
+        focus_tags = pos_tagging(raw_text)
+        
     if submit_text:
         
         col1,col2  = st.columns(2)
@@ -171,6 +185,8 @@ def load_sentiment_analysis_ui():
             st.info('Customer Feedback - ')
             st.write(word_list)
             
+            st.info('Focus Area')
+            st.write(focus_tags)
         with col2 :
             
             st.info('Emotions')
